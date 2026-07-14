@@ -1,10 +1,9 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolvePackageJsonExports": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "isolatedModules": true,
     "declaration": true,
     "removeComments": true,
@@ -22,6 +21,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "strict": true,
+    "strictPropertyInitialization": false,
     "noFallthroughCasesInSwitch": false
   }
 }
