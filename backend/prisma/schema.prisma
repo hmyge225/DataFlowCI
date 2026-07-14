@@ -8,6 +8,39 @@ generator client {
   output   = "../generated/prisma"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(uuid()) @db.VarChar(36)
+  email         String    @unique @db.VarChar(255)
+  password      String    @db.VarChar(255)
+  firstName     String    @db.VarChar(100) @map("first_name")
+  lastName      String    @db.VarChar(100) @map("last_name")
+  nameCorporate String?  @db.VarChar(255) @map("name_corporate")
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  tokenHash  String   @unique @db.VarChar(255) @map("token_hash")
+  userId     String   @map("user_id") @db.VarChar(36)
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
 datasource db {
   provider = "mysql"
 }
