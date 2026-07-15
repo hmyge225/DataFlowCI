@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SourcesModule } from './sources/sources.module';
+import { SchemasModule } from './schemas/schemas.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 // ConfigModule charge les variables d'environnement (.env) pour toute l'application.
 @Module({
@@ -13,6 +15,8 @@ import { SourcesModule } from './sources/sources.module';
     PrismaModule,
     AuthModule,
     SourcesModule,
+    SchemasModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

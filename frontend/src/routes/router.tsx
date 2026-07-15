@@ -8,6 +8,8 @@ import SourcesPage from '../pages/Sources/SourcesPage';
 import SourceDetailPageWrapper from '../pages/Sources/SourceDetailPage';
 import SourceNewPage from '../pages/Sources/SourceNewPage';
 import SourceEditPage from '../pages/Sources/SourceEditPage';
+import SchemaVersionsPage from '../pages/Schemas/SchemaVersionsPage';
+import SchemaNewPage from '../pages/Schemas/SchemaNewPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const router = createBrowserRouter([
@@ -46,6 +48,14 @@ export const router = createBrowserRouter([
             element: <SourceEditPage />,
           },
           {
+            path: '/sources/:id/schemas',
+            element: <SchemaVersionsPage />,
+          },
+          {
+            path: '/sources/:id/schemas/new',
+            element: <SchemaNewPage />,
+          },
+          {
             path: '/',
             element: <Navigate to="/dashboard" replace />,
           },
@@ -78,6 +88,14 @@ export const router = createBrowserRouter([
           {
             path: '/sources/:id/edit',
             element: <SourceEditPage />,
+          },
+          {
+            path: '/sources/:id/schemas',
+            element: <SchemaVersionsPage />,
+          },
+          {
+            path: '/sources/:id/schemas/new',
+            element: <SchemaNewPage />,
           },
         ],
       },
