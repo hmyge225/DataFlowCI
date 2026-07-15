@@ -13,6 +13,7 @@ import { WorkerModule } from './worker/worker.module';
 import { ReportsModule } from './reports/reports.module';
 import { ExportModule } from './export/export.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { AdminModule } from './admin/admin.module';
 
 // ConfigModule charge les variables d'environnement (.env) pour toute l'application.
 @Module({
@@ -29,6 +30,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     ReportsModule,
     ExportModule,
     DashboardModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
