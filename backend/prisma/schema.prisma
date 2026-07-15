@@ -8,6 +8,147 @@ generator client {
   output   = "../generated/prisma"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ImportStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+model User {
+  id            String    @id @default(uuid()) @db.VarChar(36)
+  email         String    @unique @db.VarChar(255)
+  password      String    @db.VarChar(255)
+  firstName     String    @db.VarChar(100) @map("first_name")
+  lastName      String    @db.VarChar(100) @map("last_name")
+  nameCorporate String   @db.VarChar(255) @map("name_corporate")
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  refreshTokens RefreshToken[]
+  sources       Source[]
+  importJobs    ImportJob[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  tokenHash  String   @unique @db.VarChar(255) @map("token_hash")
+  userId     String   @map("user_id") @db.VarChar(36)
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Source {
+  id          String    @id @default(uuid()) @db.VarChar(36)
+  userId      String    @map("user_id") @db.VarChar(36)
+  name        String    @db.VarChar(255)
+  description String?   @db.Text
+  isActive    Boolean   @default(true) @map("is_active")
+  deletedAt   DateTime? @map("deleted_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schemaVersions SchemaVersion[]
+  importJobs     ImportJob[]
+
+  @@index([userId])
+  @@map("sources")
+}
+
+// Immutable après création : une modification crée une nouvelle version (version = max+1).
+model SchemaVersion {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  sourceId  String   @map("source_id") @db.VarChar(36)
+  version   Int
+  fields    Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  source     Source      @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+  importJobs ImportJob[]
+
+  @@unique([sourceId, version])
+  @@index([sourceId])
+  @@map("schema_versions")
+}
+
+model ImportJob {
+  id               String       @id @default(uuid()) @db.VarChar(36)
+  sourceId         String       @map("source_id") @db.VarChar(36)
+  schemaVersionId  String       @map("schema_version_id") @db.VarChar(36)
+  userId           String       @map("user_id") @db.VarChar(36)
+  status           ImportStatus @default(PENDING)
+  filepath         String       @db.VarChar(500)
+  originalFilename String       @map("original_filename") @db.VarChar(255)
+  errorMessage     String?      @map("error_message") @db.Text
+  createdAt        DateTime     @default(now()) @map("created_at")
+  startedAt        DateTime?    @map("started_at")
+  finishedAt       DateTime?    @map("finished_at")
+
+  source        Source            @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+  schemaVersion SchemaVersion     @relation(fields: [schemaVersionId], references: [id], onDelete: Restrict)
+  user          User              @relation(fields: [userId], references: [id], onDelete: Restrict)
+  importedRows  ImportedRow[]
+  report        ValidationReport?
+
+  @@index([sourceId])
+  @@index([userId])
+  @@index([status])
+  @@map("import_jobs")
+}
+
+model ImportedRow {
+  id          String  @id @default(uuid()) @db.VarChar(36)
+  importJobId String  @map("import_job_id") @db.VarChar(36)
+  rowIndex    Int     @map("row_index")
+  data        Json
+  isValid     Boolean @map("is_valid")
+
+  importJob        ImportJob         @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+  validationErrors ValidationError[]
+
+  @@index([importJobId])
+  @@map("imported_rows")
+}
+
+model ValidationError {
+  id            String @id @default(uuid()) @db.VarChar(36)
+  importedRowId String @map("imported_row_id") @db.VarChar(36)
+  column        String @db.VarChar(255)
+  message       String @db.Text
+
+  importedRow ImportedRow @relation(fields: [importedRowId], references: [id], onDelete: Cascade)
+
+  @@index([importedRowId])
+  @@map("validation_errors")
+}
+
+model ValidationReport {
+  id           String   @id @default(uuid()) @db.VarChar(36)
+  importJobId  String   @unique @map("import_job_id") @db.VarChar(36)
+  total        Int
+  validCount   Int      @map("valid_count")
+  invalidCount Int      @map("invalid_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  importJob ImportJob @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+
+  @@map("validation_reports")
+}
+
 datasource db {
   provider = "mysql"
 }

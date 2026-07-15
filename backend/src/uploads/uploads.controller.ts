@@ -1,0 +1,92 @@
+import {
+  Controller,
+  Post,
+  Param,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadsService } from './uploads.service';
+import { UploadResponseDto } from './dto/upload-response.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import {
+  CurrentUser,
+  AuthenticatedUser,
+} from '../auth/decorators/current-user.decorator';
+
+@ApiTags('uploads')
+@Controller('sources/:sourceId/uploads')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@ApiUnauthorizedResponse({ description: 'Token manquant ou invalide.' })
+export class UploadsController {
+  constructor(private uploadsService: UploadsService) {}
+
+  @Post()
+  @ApiOperation({
+    summary: 'Uploader un fichier CSV pour une source',
+    description:
+      'Upload un fichier CSV, le stocke localement et crée un ImportJob en PENDING. Le traitement sera effectué par le worker.',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiCreatedResponse({
+    description: 'Fichier uploadé avec succès, job créé en PENDING.',
+    type: UploadResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Fichier invalide ou source sans schéma.',
+  })
+  @ApiNotFoundResponse({ description: 'Source introuvable.' })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 20 * 1024 * 1024, // 20 Mo
+      },
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname.match(/\.csv$/i)) {
+          return callback(
+            new BadRequestException('Seuls les fichiers CSV sont autorisés'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  async upload(
+    @Param('sourceId') sourceId: string,
+    @UploadedFile() file: { originalname: string; buffer: Buffer },
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<UploadResponseDto> {
+    if (!file) {
+      throw new BadRequestException('Aucun fichier fourni');
+    }
+
+    const isAdmin = user.role === 'ADMIN';
+    return this.uploadsService.uploadFile(sourceId, file, user.userId, isAdmin);
+  }
+}
