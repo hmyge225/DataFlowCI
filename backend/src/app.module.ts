@@ -10,6 +10,8 @@ import { UploadsModule } from './uploads/uploads.module';
 import { ImportJobsModule } from './import-jobs/import-jobs.module';
 import { QueueModule } from './queue/queue.module';
 import { WorkerModule } from './worker/worker.module';
+import { ReportsModule } from './reports/reports.module';
+import { ExportModule } from './export/export.module';
 
 // ConfigModule charge les variables d'environnement (.env) pour toute l'application.
 @Module({
@@ -23,6 +25,8 @@ import { WorkerModule } from './worker/worker.module';
     ImportJobsModule,
     QueueModule,
     WorkerModule,
+    ReportsModule,
+    ExportModule,
   ],
   controllers: [AppController],
   providers: [AppService],

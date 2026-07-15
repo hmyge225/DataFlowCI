@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useUpload } from '../hooks/useUpload';
+import { getAccessToken } from '../../../shared/lib/api';
 
 interface UploadFormProps {
   sourceId: string;
@@ -64,9 +65,16 @@ export const UploadForm = ({ sourceId }: UploadFormProps) => {
     e.preventDefault();
     if (!selectedFile) return;
 
+    const token = getAccessToken();
+    if (!token) {
+      alert('Non authentifié');
+      return;
+    }
+
     upload.mutate({
       sourceId,
       file: selectedFile,
+      token,
     });
 
     setSelectedFile(null);

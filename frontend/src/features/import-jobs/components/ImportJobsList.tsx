@@ -1,5 +1,6 @@
 import { useImportJobs, useDeleteImportJob } from '../hooks/useImportJobs';
 import type { ImportStatus } from '../types';
+import { ExportButtons } from '../../export/components/ExportButtons';
 
 const statusColors: Record<ImportStatus, string> = {
   PENDING: 'bg-yellow-100 text-yellow-800',
@@ -68,6 +69,14 @@ export const ImportJobsList = () => {
               </p>
             </div>
           )}
+
+          <div className="mt-3">
+            <ExportButtons
+              importJobId={job.id}
+              hasValidRows={(job.report?.validCount ?? 0) > 0}
+              hasErrors={(job.report?.invalidCount ?? 0) > 0}
+            />
+          </div>
 
           <button
             onClick={() => deleteJob.mutate(job.id)}
