@@ -1,18 +1,16 @@
-import axios from 'axios';
+import { api } from '../../../shared/lib/api';
 import type { ImportJob } from '../types';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
 export const getImportJobs = async (): Promise<ImportJob[]> => {
-  const { data } = await axios.get<ImportJob[]>(`${API_URL}/import-jobs`);
+  const { data } = await api.get<ImportJob[]>('/import-jobs');
   return data;
 };
 
 export const getImportJob = async (id: string): Promise<ImportJob> => {
-  const { data } = await axios.get<ImportJob>(`${API_URL}/import-jobs/${id}`);
+  const { data } = await api.get<ImportJob>(`/import-jobs/${id}`);
   return data;
 };
 
 export const deleteImportJob = async (id: string): Promise<void> => {
-  await axios.delete(`${API_URL}/import-jobs/${id}`);
+  await api.delete(`/import-jobs/${id}`);
 };

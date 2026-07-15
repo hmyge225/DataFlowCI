@@ -48,22 +48,22 @@ export default function SourceForm({ source, mode }: SourceFormProps) {
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate('/sources')}
-          className="rounded-lg p-2 text-white/60 hover:bg-white/10 hover:text-white"
+          className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 hover:text-[var(--color-brand)]"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <h1 className="text-2xl font-bold text-white">
+        <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">
           {mode === 'create' ? 'Nouvelle source' : 'Modifier la source'}
         </h1>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="mx-auto max-w-xl space-y-5 rounded-xl border border-white/10 bg-white/5 p-6"
+        className="mx-auto max-w-xl space-y-5 rounded-xl border border-[var(--color-brand)]/20 bg-white p-6"
       >
         <div className="space-y-2">
-          <label className="text-sm font-medium text-white/80">
-            Nom <span className="text-red-400">*</span>
+          <label className="text-sm font-medium text-[var(--color-text-primary)]">
+            Nom <span className="text-red-600">*</span>
           </label>
           <input
             type="text"
@@ -71,20 +71,20 @@ export default function SourceForm({ source, mode }: SourceFormProps) {
             onChange={(e) => setName(e.target.value)}
             required
             maxLength={255}
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-white/30 focus:border-emerald-400 focus:outline-none"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-[var(--color-text-primary)] placeholder-gray-400 focus:border-[var(--color-brand)] focus:outline-none"
             placeholder="Ex: Clients Q3 2024"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-white/80">
+          <label className="text-sm font-medium text-[var(--color-text-primary)]">
             Description
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-white/30 focus:border-emerald-400 focus:outline-none"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-[var(--color-text-primary)] placeholder-gray-400 focus:border-[var(--color-brand)] focus:outline-none"
             placeholder="Description optionnelle de la source..."
           />
         </div>
@@ -95,9 +95,9 @@ export default function SourceForm({ source, mode }: SourceFormProps) {
             type="checkbox"
             checked={isActive}
             onChange={(e) => setIsActive(e.target.checked)}
-            className="h-4 w-4 rounded border-white/20 bg-white/5 accent-emerald-500"
+            className="h-4 w-4 rounded border-gray-300 bg-white accent-[var(--color-brand)]"
           />
-          <label htmlFor="isActive" className="text-sm text-white/80">
+          <label htmlFor="isActive" className="text-sm text-[var(--color-text-primary)]">
             Source active
           </label>
         </div>
@@ -106,14 +106,14 @@ export default function SourceForm({ source, mode }: SourceFormProps) {
           <button
             type="button"
             onClick={() => navigate('/sources')}
-            className="rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-white/70 hover:bg-white/5"
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] hover:bg-gray-50"
           >
             Annuler
           </button>
           <button
             type="submit"
             disabled={isPending || !name.trim()}
-            className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-400 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-[var(--color-brand)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--color-brand-dark)] disabled:opacity-50"
           >
             <Save className="h-4 w-4" />
             {isPending ? 'Enregistrement...' : 'Enregistrer'}

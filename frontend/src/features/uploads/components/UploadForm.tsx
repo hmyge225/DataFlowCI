@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import { useUpload } from '../hooks/useUpload';
-import { getAccessToken } from '../../../shared/lib/api';
 
 interface UploadFormProps {
   sourceId: string;
@@ -65,16 +64,9 @@ export const UploadForm = ({ sourceId }: UploadFormProps) => {
     e.preventDefault();
     if (!selectedFile) return;
 
-    const token = getAccessToken();
-    if (!token) {
-      alert('Non authentifié');
-      return;
-    }
-
     upload.mutate({
       sourceId,
       file: selectedFile,
-      token,
     });
 
     setSelectedFile(null);
@@ -89,7 +81,7 @@ export const UploadForm = ({ sourceId }: UploadFormProps) => {
           onDrop={handleDrop}
           className={`
             border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-            ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
+            ${isDragging ? 'border-[var(--color-brand)] bg-[var(--color-surface)]' : 'border-gray-300 hover:border-[var(--color-brand)]'}
           `}
         >
           <input
@@ -122,7 +114,7 @@ export const UploadForm = ({ sourceId }: UploadFormProps) => {
           <button
             type="submit"
             disabled={upload.isPending}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-[var(--color-brand)] text-white py-2 px-4 rounded-lg hover:bg-[var(--color-brand-dark)] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
             {upload.isPending ? 'Upload en cours...' : 'Uploader'}
           </button>

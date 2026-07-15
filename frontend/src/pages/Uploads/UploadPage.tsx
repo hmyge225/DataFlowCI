@@ -2,16 +2,16 @@ import { useParams } from 'react-router';
 import { UploadForm } from '../../features/uploads/components/UploadForm';
 
 export const UploadPage = () => {
-  const { sourceId } = useParams<{ sourceId: string }>();
+  const { id } = useParams<{ id: string }>();
 
-  if (!sourceId) {
+  if (!id) {
     return <div>Source ID manquant</div>;
   }
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Uploader un fichier</h1>
-      <UploadForm sourceId={sourceId} />
+      <UploadForm sourceId={id} />
     </div>
   );
 };

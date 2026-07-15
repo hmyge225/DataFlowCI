@@ -51,7 +51,7 @@ export const ExportButtons = ({
       {hasValidRows && (
         <button
           onClick={handleExportValid}
-          className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+          className="px-3 py-1 bg-[var(--color-brand)] text-white text-sm rounded hover:bg-[var(--color-brand-dark)] transition-colors"
         >
           Télécharger les lignes valides
         </button>
@@ -59,7 +59,7 @@ export const ExportButtons = ({
       {hasErrors && (
         <button
           onClick={handleExportErrors}
-          className="px-3 py-1 bg-orange-600 text-white text-sm rounded hover:bg-orange-700 transition-colors"
+          className="px-3 py-1 bg-[var(--color-accent)] text-white text-sm rounded hover:bg-orange-700 transition-colors"
         >
           Télécharger le rapport d'erreurs
         </button>

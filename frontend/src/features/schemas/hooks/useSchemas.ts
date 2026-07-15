@@ -8,6 +8,7 @@ import {
   getSchemaVersionsRequest,
   getSchemaVersionRequest,
   createSchemaVersionRequest,
+  deleteSchemaVersionRequest,
 } from '../services/schemas.service';
 import type { CreateSchemaVersionInput } from '../types';
 
@@ -48,6 +49,23 @@ export function useCreateSchemaVersion(sourceId: string) {
     },
     onError: (err: Error) => {
       toast.error(err.message || 'Erreur lors de la création');
+    },
+  });
+}
+
+export function useDeleteSchemaVersion(sourceId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (version: number) =>
+      deleteSchemaVersionRequest(sourceId, version),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: schemasKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: schemasKeys.details() });
+      queryClient.invalidateQueries({ queryKey: ['sources', 'detail', sourceId] });
+      toast.success('Version de schéma supprimée');
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de la suppression');
     },
   });
 }

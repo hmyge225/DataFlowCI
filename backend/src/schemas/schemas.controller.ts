@@ -2,10 +2,13 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
   Body,
   Param,
   ParseIntPipe,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,6 +19,8 @@ import {
   ApiNotFoundResponse,
   ApiUnauthorizedResponse,
   ApiBadRequestResponse,
+  ApiNoContentResponse,
+  ApiConflictResponse,
 } from '@nestjs/swagger';
 import { SchemasService } from './schemas.service';
 import { CreateSchemaVersionDto } from './dto/create-schema-version.dto';
@@ -85,5 +90,28 @@ export class SchemasController {
   ) {
     const isAdmin = user.role === 'ADMIN';
     return this.schemasService.findOne(sourceId, version, user.userId, isAdmin);
+  }
+
+  // DELETE /sources/:sourceId/schemas/:version
+  @Delete(':version')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: "Supprimer une version de schéma",
+    description: "Supprime une version de schéma uniquement si elle n'est liée à aucun job d'import.",
+  })
+  @ApiNoContentResponse({ description: 'Version de schéma supprimée avec succès.' })
+  @ApiNotFoundResponse({
+    description: 'Source ou version de schéma introuvable.',
+  })
+  @ApiConflictResponse({
+    description: "Impossible de supprimer : cette version est liée à des jobs d'import.",
+  })
+  async delete(
+    @Param('sourceId') sourceId: string,
+    @Param('version', ParseIntPipe) version: number,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    const isAdmin = user.role === 'ADMIN';
+    return this.schemasService.delete(sourceId, version, user.userId, isAdmin);
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSchemaVersionDto } from './dto/create-schema-version.dto';
 import { Prisma } from '../../generated/prisma/client';
@@ -82,5 +86,37 @@ export class SchemasService {
     }
 
     return schemaVersion;
+  }
+
+  async delete(
+    sourceId: string,
+    version: number,
+    userId: string,
+    isAdmin: boolean,
+  ) {
+    await this.assertSourceOwnership(sourceId, userId, isAdmin);
+
+    const schemaVersion = await this.prisma.schemaVersion.findUnique({
+      where: { sourceId_version: { sourceId, version } },
+    });
+
+    if (!schemaVersion) {
+      throw new NotFoundException('Version de schéma introuvable');
+    }
+
+    // Check if this schema version is linked to any import jobs
+    const importJobCount = await this.prisma.importJob.count({
+      where: { schemaVersionId: schemaVersion.id },
+    });
+
+    if (importJobCount > 0) {
+      throw new ConflictException(
+        "Impossible de supprimer cette version de schéma : elle est liée à des jobs d'import.",
+      );
+    }
+
+    await this.prisma.schemaVersion.delete({
+      where: { sourceId_version: { sourceId, version } },
+    });
   }
 }

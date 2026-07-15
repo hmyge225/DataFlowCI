@@ -1,14 +1,7 @@
 import {
   LayoutDashboard,
-  FolderKanban,
-  Library,
-  HelpCircle,
-  User,
-  Users,
   FileText,
   BarChart3,
-  Settings,
-  Bell,
   Database,
   type LucideIcon,
 } from 'lucide-react';
@@ -76,36 +69,25 @@ export const DASH_CONFIG: Record<Role, DashConfig> = {
     },
     sections: [
       {
+        title: 'Statistiques',
         items: [
-          { label: 'Tableau de bord', icon: LayoutDashboard, to: '/admin' },
+          { label: 'Dashboard', icon: BarChart3, to: '/dashboard-stats' },
         ],
       },
       {
         title: 'Gestion',
         items: [
-          { label: 'Utilisateurs', icon: Users },
           { label: 'Sources', icon: Database, to: '/sources' },
-          { label: 'Postulations', icon: FileText },
+          { label: 'Imports', icon: FileText, to: '/import-jobs' },
         ],
       },
       {
-        title: 'Contenus',
         items: [
-          { label: 'Programmes', icon: FolderKanban },
-          { label: 'Kits', icon: Library },
-          { label: 'FAQ', icon: HelpCircle },
+          { label: 'Tableau de bord', icon: LayoutDashboard, to: '/admin' },
         ],
-      },
-      {
-        title: 'Analyse',
-        items: [{ label: "Journal d'audit", icon: BarChart3 }],
-      },
-      {
-        title: 'Système',
-        items: [{ label: 'Paramètres', icon: Settings }],
       },
     ],
-    bottomItems: [{ label: 'Notifications', icon: Bell }],
+    bottomItems: [],
     user: {
       name: 'Administrateur',
       subtitle: 'Administrateur DataFlowCI',
@@ -125,6 +107,12 @@ export const DASH_CONFIG: Record<Role, DashConfig> = {
     },
     sections: [
       {
+        title: 'Statistiques',
+        items: [
+          { label: 'Dashboard', icon: BarChart3, to: '/dashboard-stats' },
+        ],
+      },
+      {
         items: [
           { label: 'Tableau de bord', icon: LayoutDashboard, to: '/dashboard' },
         ],
@@ -134,24 +122,16 @@ export const DASH_CONFIG: Record<Role, DashConfig> = {
         items: [{ label: 'Mes sources', icon: Database, to: '/sources' }],
       },
       {
-        title: 'Ressources',
-        items: [
-          { label: 'Bibliothèque', icon: Library },
-          { label: 'FAQ', icon: HelpCircle },
-        ],
-      },
-      {
-        title: 'Mon compte',
-        items: [{ label: 'Profil', icon: User }],
+        title: 'Imports',
+        items: [{ label: 'Mes imports', icon: FileText, to: '/import-jobs' }],
       },
     ],
-    bottomItems: [{ label: 'Notifications', icon: Bell }],
+    bottomItems: [],
     mobileBottomBar: [
       { label: 'Accueil', icon: LayoutDashboard, to: '/dashboard' },
-      { label: 'Dossiers', icon: FolderKanban },
-      { label: 'Bibliothèque', icon: Library },
-      { label: 'FAQ', icon: HelpCircle },
-      { label: 'Profil', icon: User },
+      { label: 'Sources', icon: Database, to: '/sources' },
+      { label: 'Imports', icon: FileText, to: '/import-jobs' },
+      { label: 'Stats', icon: BarChart3, to: '/dashboard-stats' },
     ],
     user: {
       name: 'Utilisateur',

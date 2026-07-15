@@ -31,3 +31,10 @@ export async function createSchemaVersionRequest(
   );
   return data;
 }
+
+export async function deleteSchemaVersionRequest(
+  sourceId: string,
+  version: number,
+) {
+  await api.delete(`/sources/${sourceId}/schemas/${version}`);
+}

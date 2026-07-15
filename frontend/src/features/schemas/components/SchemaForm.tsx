@@ -63,34 +63,34 @@ export default function SchemaForm() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate(`/sources/${sourceId}/schemas`)}
-          className="rounded-lg p-2 text-white/60 hover:bg-white/10 hover:text-white"
+          className="rounded-lg p-2 text-[var(--color-text-muted)] hover:bg-[var(--color-brand)]/10 hover:text-[var(--color-brand)]"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <h1 className="text-2xl font-bold text-white">
+        <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">
           Nouvelle version de schéma
         </h1>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="mx-auto max-w-2xl space-y-5 rounded-xl border border-white/10 bg-white/5 p-6"
+        className="mx-auto max-w-2xl space-y-5 rounded-xl border border-[var(--color-brand)]/20 bg-white p-6"
       >
         <div className="space-y-4">
           {fields.map((field, index) => (
             <div
               key={index}
-              className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/5 p-4"
+              className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-[var(--color-surface)] p-4"
             >
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-white/80">
+                <span className="text-sm font-medium text-[var(--color-text-primary)]">
                   Champ {index + 1}
                 </span>
                 {fields.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeField(index)}
-                    className="rounded p-1 text-red-400 hover:bg-red-500/20"
+                    className="rounded p-1 text-red-600 hover:bg-red-100"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -99,7 +99,7 @@ export default function SchemaForm() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs text-white/60">Nom</label>
+                  <label className="text-xs text-[var(--color-text-muted)]">Nom</label>
                   <input
                     type="text"
                     value={field.name}
@@ -107,13 +107,13 @@ export default function SchemaForm() {
                       updateField(index, { name: e.target.value })
                     }
                     required
-                    className="w-full rounded border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-white/30 focus:border-emerald-400 focus:outline-none"
+                    className="w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-[var(--color-text-primary)] placeholder-gray-400 focus:border-[var(--color-brand)] focus:outline-none"
                     placeholder="ex: email"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-white/60">Type</label>
+                  <label className="text-xs text-[var(--color-text-muted)]">Type</label>
                   <select
                     value={field.type}
                     onChange={(e) =>
@@ -121,7 +121,7 @@ export default function SchemaForm() {
                         type: e.target.value as SchemaField['type'],
                       })
                     }
-                    className="w-full rounded border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-emerald-400 focus:outline-none"
+                    className="w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-[var(--color-text-primary)] focus:border-[var(--color-brand)] focus:outline-none"
                   >
                     {FIELD_TYPES.map((t) => (
                       <option key={t} value={t}>
@@ -133,14 +133,14 @@ export default function SchemaForm() {
               </div>
 
               <div className="flex items-center gap-3">
-                <label className="flex items-center gap-2 text-sm text-white/80">
+                <label className="flex items-center gap-2 text-sm text-[var(--color-text-primary)]">
                   <input
                     type="checkbox"
                     checked={field.required}
                     onChange={(e) =>
                       updateField(index, { required: e.target.checked })
                     }
-                    className="h-4 w-4 rounded border-white/20 bg-white/5 accent-emerald-500"
+                    className="h-4 w-4 rounded border-gray-300 bg-white accent-[var(--color-brand)]"
                   />
                   Requis
                 </label>
@@ -158,7 +158,7 @@ export default function SchemaForm() {
                             : undefined,
                         })
                       }
-                      className="w-20 rounded border border-white/10 bg-white/5 px-2 py-1 text-sm text-white placeholder-white/30 focus:border-emerald-400 focus:outline-none"
+                      className="w-20 rounded border border-gray-300 bg-white px-2 py-1 text-sm text-[var(--color-text-primary)] placeholder-gray-400 focus:border-[var(--color-brand)] focus:outline-none"
                     />
                     <input
                       type="number"
@@ -171,7 +171,7 @@ export default function SchemaForm() {
                             : undefined,
                         })
                       }
-                      className="w-20 rounded border border-white/10 bg-white/5 px-2 py-1 text-sm text-white placeholder-white/30 focus:border-emerald-400 focus:outline-none"
+                      className="w-20 rounded border border-gray-300 bg-white px-2 py-1 text-sm text-[var(--color-text-primary)] placeholder-gray-400 focus:border-[var(--color-brand)] focus:outline-none"
                     />
                   </div>
                 )}
@@ -184,7 +184,7 @@ export default function SchemaForm() {
                     onChange={(e) =>
                       updateField(index, { pattern: e.target.value })
                     }
-                    className="flex-1 rounded border border-white/10 bg-white/5 px-3 py-1 text-sm text-white placeholder-white/30 focus:border-emerald-400 focus:outline-none"
+                    className="flex-1 rounded border border-gray-300 bg-white px-3 py-1 text-sm text-[var(--color-text-primary)] placeholder-gray-400 focus:border-[var(--color-brand)] focus:outline-none"
                   />
                 )}
               </div>
@@ -194,7 +194,7 @@ export default function SchemaForm() {
           <button
             type="button"
             onClick={addField}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-white/20 py-3 text-sm text-white/70 hover:bg-white/5"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 py-3 text-sm text-[var(--color-text-muted)] hover:bg-gray-50"
           >
             <Plus className="h-4 w-4" />
             Ajouter un champ
@@ -205,14 +205,14 @@ export default function SchemaForm() {
           <button
             type="button"
             onClick={() => navigate(`/sources/${sourceId}/schemas`)}
-            className="rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-white/70 hover:bg-white/5"
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] hover:bg-gray-50"
           >
             Annuler
           </button>
           <button
             type="submit"
             disabled={isPending}
-            className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-400 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-[var(--color-brand)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--color-brand-dark)] disabled:opacity-50"
           >
             <Save className="h-4 w-4" />
             {isPending ? 'Création...' : 'Créer la version'}

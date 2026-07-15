@@ -1,10 +1,8 @@
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { api } from '../../../shared/lib/api';
 
 export const exportValidRows = async (importJobId: string): Promise<void> => {
-  const response = await axios.get(
-    `${API_URL}/import-jobs/${importJobId}/export/valid`,
+  const response = await api.get(
+    `/import-jobs/${importJobId}/export/valid`,
     {
       responseType: 'blob',
     },
@@ -21,8 +19,8 @@ export const exportValidRows = async (importJobId: string): Promise<void> => {
 };
 
 export const exportErrorsReport = async (importJobId: string): Promise<void> => {
-  const response = await axios.get(
-    `${API_URL}/import-jobs/${importJobId}/export/errors`,
+  const response = await api.get(
+    `/import-jobs/${importJobId}/export/errors`,
     {
       responseType: 'blob',
     },
@@ -39,8 +37,8 @@ export const exportErrorsReport = async (importJobId: string): Promise<void> => 
 };
 
 export const exportOriginalFile = async (importJobId: string): Promise<void> => {
-  const response = await axios.get(
-    `${API_URL}/import-jobs/${importJobId}/export/original`,
+  const response = await api.get(
+    `/import-jobs/${importJobId}/export/original`,
     {
       responseType: 'blob',
     },
