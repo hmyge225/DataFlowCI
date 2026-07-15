@@ -27,6 +27,10 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RefreshAuthGuard } from './guards/refresh-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
+import {
+  CurrentUser,
+  AuthenticatedUser,
+} from './decorators/current-user.decorator';
 
 // Controller = point d'entrée HTTP. Il reçoit les requêtes et appelle le service.
 @ApiTags('auth') // Regroupe les endpoints
@@ -145,11 +149,12 @@ export class AuthController {
     description: 'Access token manquant ou invalide.',
   })
   async logout(
-    @Req() req: Request & { user: { userId: string } },
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
     const refreshToken = req.cookies?.refresh_token as string;
-    await this.authService.logout(req.user.userId, refreshToken);
+    await this.authService.logout(user.userId, refreshToken);
 
     res.clearCookie('refresh_token');
     return { message: 'Déconnexion réussie' };
@@ -169,11 +174,8 @@ export class AuthController {
   @ApiUnauthorizedResponse({
     description: 'Access token manquant ou invalide.',
   })
-  me(
-    @Req()
-    req: Request & { user: { userId: string; email: string; role: string } },
-  ) {
-    return req.user;
+  me(@CurrentUser() user: AuthenticatedUser) {
+    return user;
   }
 
   // POST /auth/users
@@ -197,8 +199,8 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Données invalides.' })
   async createUser(
     @Body() dto: CreateUserDto,
-    @Req() req: Request & { user: { userId: string } },
+    @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.authService.createUserByAdmin(dto, req.user.userId);
+    return this.authService.createUserByAdmin(dto, user.userId);
   }
 }
