@@ -10,6 +10,8 @@ import SourceNewPage from '../pages/Sources/SourceNewPage';
 import SourceEditPage from '../pages/Sources/SourceEditPage';
 import SchemaVersionsPage from '../pages/Schemas/SchemaVersionsPage';
 import SchemaNewPage from '../pages/Schemas/SchemaNewPage';
+import { UploadPage } from '../pages/Uploads/UploadPage';
+import { ImportJobsPage } from '../pages/ImportJobs/ImportJobsPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const router = createBrowserRouter([
@@ -56,6 +58,14 @@ export const router = createBrowserRouter([
             element: <SchemaNewPage />,
           },
           {
+            path: '/sources/:id/upload',
+            element: <UploadPage />,
+          },
+          {
+            path: '/import-jobs',
+            element: <ImportJobsPage />,
+          },
+          {
             path: '/',
             element: <Navigate to="/dashboard" replace />,
           },
@@ -96,6 +106,14 @@ export const router = createBrowserRouter([
           {
             path: '/sources/:id/schemas/new',
             element: <SchemaNewPage />,
+          },
+          {
+            path: '/sources/:id/upload',
+            element: <UploadPage />,
+          },
+          {
+            path: '/import-jobs',
+            element: <ImportJobsPage />,
           },
         ],
       },
