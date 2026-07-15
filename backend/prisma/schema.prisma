@@ -19,7 +19,7 @@ model User {
   password      String    @db.VarChar(255)
   firstName     String    @db.VarChar(100) @map("first_name")
   lastName      String    @db.VarChar(100) @map("last_name")
-  nameCorporate String?  @db.VarChar(255) @map("name_corporate")
+  nameCorporate String   @db.VarChar(255) @map("name_corporate")
   role          Role      @default(USER)
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")

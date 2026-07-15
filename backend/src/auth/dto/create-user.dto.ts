@@ -1,11 +1,12 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Role } from '../../../generated/prisma/client';
 
-// DTO = Data Transfer Object. C'est une classe qui définit la "forme" des données
-// que le client doit envoyer. class-validator vérifie automatiquement les règles.
-export class RegisterDto {
+// DTO réservé aux administrateurs : contrairement à RegisterDto (inscription publique),
+// il permet de choisir explicitement le rôle du nouvel utilisateur, y compris ADMIN.
+export class CreateUserDto {
   @ApiProperty({
-    example: 'user@example.com',
+    example: 'newadmin@example.com',
     description: 'Adresse email unique',
   })
   @IsEmail()
@@ -34,4 +35,13 @@ export class RegisterDto {
   })
   @IsString()
   nameCorporate: string;
+
+  @ApiProperty({
+    example: 'ADMIN',
+    enum: Role,
+    description:
+      'Rôle du nouvel utilisateur (USER ou ADMIN). Réservé aux administrateurs.',
+  })
+  @IsEnum(Role)
+  role: Role;
 }
