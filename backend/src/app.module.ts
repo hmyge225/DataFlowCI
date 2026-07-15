@@ -7,6 +7,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { SourcesModule } from './sources/sources.module';
 import { SchemasModule } from './schemas/schemas.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { ImportJobsModule } from './import-jobs/import-jobs.module';
+import { QueueModule } from './queue/queue.module';
+import { WorkerModule } from './worker/worker.module';
 
 // ConfigModule charge les variables d'environnement (.env) pour toute l'application.
 @Module({
@@ -17,6 +20,9 @@ import { UploadsModule } from './uploads/uploads.module';
     SourcesModule,
     SchemasModule,
     UploadsModule,
+    ImportJobsModule,
+    QueueModule,
+    WorkerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

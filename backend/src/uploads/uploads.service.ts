@@ -3,6 +3,8 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bullmq';
 import { PrismaService } from '../prisma/prisma.service';
 import { UploadResponseDto } from './dto/upload-response.dto';
 import * as fs from 'fs/promises';
@@ -14,7 +16,10 @@ import * as path from 'path';
 export class UploadsService {
   private readonly uploadDir = path.join(process.cwd(), 'uploads');
 
-  constructor(private prisma: PrismaService) {
+  constructor(
+    private prisma: PrismaService,
+    @InjectQueue('import-jobs') private importJobsQueue: Queue,
+  ) {
     void this.ensureUploadDir();
   }
 
@@ -91,6 +96,11 @@ export class UploadsService {
         originalFilename: file.originalname,
         status: 'PENDING',
       },
+    });
+
+    // Ajouter le job à la queue BullMQ pour traitement par le Worker
+    await this.importJobsQueue.add('import-job', {
+      importJobId: importJob.id,
     });
 
     return {
