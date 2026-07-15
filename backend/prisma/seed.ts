@@ -29,7 +29,7 @@ async function main() {
   const userEmail = 'user@dataflowci.com';
   const userPassword = await bcrypt.hash('User123!', saltRounds);
 
-  await prisma.user.upsert({
+  const user = await prisma.user.upsert({
     where: { email: userEmail },
     update: {},
     create: {
@@ -39,6 +39,47 @@ async function main() {
       lastName: 'Doe',
       nameCorporate: 'BSTEC',
       role: 'USER',
+    },
+  });
+
+  // Source de démo rattachée au USER de test (idempotent via un id fixe).
+  const demoSourceId = '00000000-0000-0000-0000-000000000001';
+  const source = await prisma.source.upsert({
+    where: { id: demoSourceId },
+    update: {},
+    create: {
+      id: demoSourceId,
+      userId: user.id,
+      name: 'Source de démonstration',
+      description: 'Source créée automatiquement par le seed pour les tests.',
+      isActive: true,
+    },
+  });
+
+  // SchemaVersion v1 de démo (immutable). Idempotent via la contrainte (sourceId, version).
+  const demoFields = [
+    {
+      name: 'email',
+      type: 'string',
+      required: true,
+      pattern: '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$',
+    },
+    { name: 'age', type: 'integer', required: false, min: 0, max: 120 },
+    {
+      name: 'status',
+      type: 'enum',
+      required: true,
+      enum: ['active', 'inactive'],
+    },
+  ];
+
+  await prisma.schemaVersion.upsert({
+    where: { sourceId_version: { sourceId: source.id, version: 1 } },
+    update: {},
+    create: {
+      sourceId: source.id,
+      version: 1,
+      fields: demoFields,
     },
   });
 
