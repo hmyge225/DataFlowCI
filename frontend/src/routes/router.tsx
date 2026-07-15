@@ -4,6 +4,10 @@ import LoginPage from '../pages/Login';
 import RegisterPage from '../pages/Register';
 import UserDashboardPage from '../pages/User/UserDashboard';
 import AdminDashboardPage from '../pages/Admin/AdminDashboard';
+import SourcesPage from '../pages/Sources/SourcesPage';
+import SourceDetailPageWrapper from '../pages/Sources/SourceDetailPage';
+import SourceNewPage from '../pages/Sources/SourceNewPage';
+import SourceEditPage from '../pages/Sources/SourceEditPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const router = createBrowserRouter([
@@ -26,6 +30,22 @@ export const router = createBrowserRouter([
             element: <UserDashboardPage />,
           },
           {
+            path: '/sources',
+            element: <SourcesPage />,
+          },
+          {
+            path: '/sources/new',
+            element: <SourceNewPage />,
+          },
+          {
+            path: '/sources/:id',
+            element: <SourceDetailPageWrapper />,
+          },
+          {
+            path: '/sources/:id/edit',
+            element: <SourceEditPage />,
+          },
+          {
             path: '/',
             element: <Navigate to="/dashboard" replace />,
           },
@@ -42,6 +62,22 @@ export const router = createBrowserRouter([
           {
             path: '/admin',
             element: <AdminDashboardPage />,
+          },
+          {
+            path: '/sources',
+            element: <SourcesPage />,
+          },
+          {
+            path: '/sources/new',
+            element: <SourceNewPage />,
+          },
+          {
+            path: '/sources/:id',
+            element: <SourceDetailPageWrapper />,
+          },
+          {
+            path: '/sources/:id/edit',
+            element: <SourceEditPage />,
           },
         ],
       },

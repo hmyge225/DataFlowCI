@@ -9,6 +9,7 @@ import {
   BarChart3,
   Settings,
   Bell,
+  Database,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -75,12 +76,15 @@ export const DASH_CONFIG: Record<Role, DashConfig> = {
     },
     sections: [
       {
-        items: [{ label: 'Tableau de bord', icon: LayoutDashboard, to: '/admin' }],
+        items: [
+          { label: 'Tableau de bord', icon: LayoutDashboard, to: '/admin' },
+        ],
       },
       {
         title: 'Gestion',
         items: [
           { label: 'Utilisateurs', icon: Users },
+          { label: 'Sources', icon: Database, to: '/sources' },
           { label: 'Postulations', icon: FileText },
         ],
       },
@@ -121,7 +125,13 @@ export const DASH_CONFIG: Record<Role, DashConfig> = {
     },
     sections: [
       {
-        items: [{ label: 'Tableau de bord', icon: LayoutDashboard, to: '/dashboard' }],
+        items: [
+          { label: 'Tableau de bord', icon: LayoutDashboard, to: '/dashboard' },
+        ],
+      },
+      {
+        title: 'Sources',
+        items: [{ label: 'Mes sources', icon: Database, to: '/sources' }],
       },
       {
         title: 'Ressources',
