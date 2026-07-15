@@ -22,9 +22,11 @@ import {
 } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto } from './dto';
+import { RegisterDto, LoginDto, CreateUserDto } from './dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RefreshAuthGuard } from './guards/refresh-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/roles.decorator';
 
 // Controller = point d'entrée HTTP. Il reçoit les requêtes et appelle le service.
 @ApiTags('auth') // Regroupe les endpoints
@@ -47,7 +49,7 @@ export class AuthController {
   async register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
-  
+
   // POST /auth/login
   // Vérifie les identifiants, génère les tokens.
   // Le refresh_token est envoyé dans un cookie HttpOnly (pas accessible au JS).
@@ -172,5 +174,31 @@ export class AuthController {
     req: Request & { user: { userId: string; email: string; role: string } },
   ) {
     return req.user;
+  }
+
+  // POST /auth/users
+  // Réservé aux ADMIN (JwtAuthGuard vérifie l'authentification, RolesGuard vérifie le rôle).
+  // Contrairement à /auth/register, permet de choisir le rôle du nouvel utilisateur (y compris ADMIN).
+  @Post('users')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Créer un utilisateur (admin)',
+    description:
+      "Réservé aux administrateurs. Permet de créer un utilisateur avec n'importe quel rôle, y compris ADMIN.",
+  })
+  @ApiBody({ type: CreateUserDto })
+  @ApiCreatedResponse({ description: 'Utilisateur créé avec succès.' })
+  @ApiConflictResponse({ description: 'Email déjà utilisé.' })
+  @ApiUnauthorizedResponse({
+    description: 'Access token manquant ou invalide.',
+  })
+  @ApiBadRequestResponse({ description: 'Données invalides.' })
+  async createUser(
+    @Body() dto: CreateUserDto,
+    @Req() req: Request & { user: { userId: string } },
+  ) {
+    return this.authService.createUserByAdmin(dto, req.user.userId);
   }
 }

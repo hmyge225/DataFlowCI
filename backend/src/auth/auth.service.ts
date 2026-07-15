@@ -1,17 +1,20 @@
 import {
   Injectable,
+  Logger,
   UnauthorizedException,
   ConflictException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import { RegisterDto, LoginDto } from './dto';
+import { RegisterDto, LoginDto, CreateUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
 
 // Ce service contient TOUTE la logique métier de l'authentification.
 // Il est injecté dans le controller. C'est le pattern "thin controller, fat service".
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
@@ -22,6 +25,9 @@ export class AuthService {
       where: { email: dto.email },
     });
     if (UserExisting) {
+      this.logger.warn(
+        `Tentative d'inscription avec un email déjà utilisé: ${dto.email}`,
+      );
       throw new ConflictException("L'adresse email est déjà utilisée");
     }
 
@@ -34,12 +40,53 @@ export class AuthService {
         password: hashedPassword,
         firstName: dto.firstName,
         lastName: dto.lastName,
-        nameCorporate: dto.nameCorporate ?? null,
-        role: dto.role ?? 'USER',
+        nameCorporate: dto.nameCorporate,
+        role: 'USER', // L'inscription publique créer un utilisateur standard.
       },
     });
 
     // On ne renvoie jamais le mot de passe, même hashé.
+    this.logger.log(
+      `Nouvel utilisateur inscrit: ${user.email} (id=${user.id})`,
+    );
+
+    return {
+      message: 'Utilisateur créé avec succès',
+      userId: user.id,
+    };
+  }
+
+  // Réservé aux ADMIN (contrôlé par RolesGuard dans le controller).
+  // Contrairement à register(), permet de choisir le rôle, y compris ADMIN.
+  async createUserByAdmin(dto: CreateUserDto, actingAdminId: string) {
+    const existing = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+    if (existing) {
+      this.logger.warn(
+        `Admin ${actingAdminId} : tentative de création d'un utilisateur avec un email déjà utilisé (${dto.email})`,
+      );
+      throw new ConflictException("L'adresse email est déjà utilisée");
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(dto.password, saltRounds);
+
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        password: hashedPassword,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        nameCorporate: dto.nameCorporate,
+        role: dto.role,
+      },
+    });
+
+    this.logger.log(
+      `Utilisateur ${user.email} (id=${user.id}, role=${user.role}) créé par l'admin ${actingAdminId}`,
+    );
+
     return {
       message: 'Utilisateur créé avec succès',
       userId: user.id,
@@ -52,11 +99,15 @@ export class AuthService {
     });
 
     if (!user) {
+      this.logger.warn(
+        `Tentative de connexion avec un email inconnu: ${dto.email}`,
+      );
       throw new UnauthorizedException('Identifiants invalides');
     }
 
     const match = await bcrypt.compare(dto.password, user.password);
     if (!match) {
+      this.logger.warn(`Mot de passe invalide pour ${dto.email}`);
       throw new UnauthorizedException('Identifiants invalides');
     }
 
@@ -65,6 +116,8 @@ export class AuthService {
     // On stocke le hash du refresh token en base, pas le token brut.
     // Si la base est compromise, l'attaquant n'a pas le token brut (il faut le hash).
     await this.storeRefreshToken(user.id, tokens.refreshToken);
+
+    this.logger.log(`Connexion réussie: ${user.email} (id=${user.id})`);
 
     return tokens;
   }
@@ -84,6 +137,8 @@ export class AuthService {
     const tokens = await this.generateTokens(user.id, user.email, user.role);
     await this.storeRefreshToken(user.id, tokens.refreshToken);
 
+    this.logger.log(`Rotation des tokens pour l'utilisateur ${userId}`);
+
     return tokens;
   }
 
@@ -101,6 +156,8 @@ export class AuthService {
         break;
       }
     }
+
+    this.logger.log(`Déconnexion de l'utilisateur ${userId}`);
 
     return { message: 'Déconnexion réussie' };
   }

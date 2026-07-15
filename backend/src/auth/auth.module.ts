@@ -7,6 +7,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RefreshAuthGuard } from './guards/refresh-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 // AuthModule regroupe tout ce qui concerne l'authentification.
 // JwtModule : signe et vérifie les tokens JWT.
@@ -25,6 +26,7 @@ import { RefreshAuthGuard } from './guards/refresh-auth.guard';
     // Guards pour protéger les routes
     JwtAuthGuard,
     RefreshAuthGuard,
+    RolesGuard,
   ],
   exports: [JwtAuthGuard],
 })
