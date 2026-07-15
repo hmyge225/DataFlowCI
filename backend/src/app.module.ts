@@ -12,6 +12,7 @@ import { QueueModule } from './queue/queue.module';
 import { WorkerModule } from './worker/worker.module';
 import { ReportsModule } from './reports/reports.module';
 import { ExportModule } from './export/export.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 // ConfigModule charge les variables d'environnement (.env) pour toute l'application.
 @Module({
@@ -27,6 +28,7 @@ import { ExportModule } from './export/export.module';
     WorkerModule,
     ReportsModule,
     ExportModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

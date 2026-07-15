@@ -12,6 +12,7 @@ import SchemaVersionsPage from '../pages/Schemas/SchemaVersionsPage';
 import SchemaNewPage from '../pages/Schemas/SchemaNewPage';
 import { UploadPage } from '../pages/Uploads/UploadPage';
 import { ImportJobsPage } from '../pages/ImportJobs/ImportJobsPage';
+import { DashboardPage } from '../pages/Dashboard/DashboardPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const router = createBrowserRouter([
@@ -66,6 +67,10 @@ export const router = createBrowserRouter([
             element: <ImportJobsPage />,
           },
           {
+            path: '/dashboard-stats',
+            element: <DashboardPage />,
+          },
+          {
             path: '/',
             element: <Navigate to="/dashboard" replace />,
           },
@@ -114,6 +119,10 @@ export const router = createBrowserRouter([
           {
             path: '/import-jobs',
             element: <ImportJobsPage />,
+          },
+          {
+            path: '/dashboard-stats',
+            element: <DashboardPage />,
           },
         ],
       },
