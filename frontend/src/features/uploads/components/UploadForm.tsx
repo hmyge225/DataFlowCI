@@ -12,8 +12,10 @@ export const UploadForm = ({ sourceId }: UploadFormProps) => {
 
   const validateAndSetFile = (file: File) => {
     const extension = file.name.split('.').pop()?.toLowerCase();
-    if (extension !== 'csv') {
-      alert('Seuls les fichiers CSV sont autorisés');
+    const allowedExtensions = ['csv', 'xlsx', 'xls'];
+    
+    if (!extension || !allowedExtensions.includes(extension)) {
+      alert('Seuls les fichiers CSV, XLSX et XLS sont autorisés');
       return;
     }
 
@@ -86,7 +88,7 @@ export const UploadForm = ({ sourceId }: UploadFormProps) => {
         >
           <input
             type="file"
-            accept=".csv"
+            accept=".csv,.xlsx,.xls"
             onChange={handleFileSelect}
             className="hidden"
             id="file-upload"
@@ -102,7 +104,7 @@ export const UploadForm = ({ sourceId }: UploadFormProps) => {
                 </div>
               ) : (
                 <div>
-                  <p className="font-medium">Glissez-déposez un fichier CSV</p>
+                  <p className="font-medium">Glissez-déposez un fichier CSV ou Excel</p>
                   <p className="text-sm">ou cliquez pour sélectionner</p>
                 </div>
               )}

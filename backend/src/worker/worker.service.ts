@@ -32,7 +32,7 @@ export class WorkerService {
     private excelParser: ExcelParserService,
   ) {}
 
-  @Process()
+  @Process('import-job')
   async handleImportJob(job: Job<{ importJobId: string }>) {
     const { importJobId } = job.data;
     this.logger.log(`Processing import job ${importJobId}`);

@@ -1,12 +1,15 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { Plus, Clock, ArrowLeft, Upload } from 'lucide-react';
+import { Plus, Clock, ArrowLeft, Upload, FileJson } from 'lucide-react';
 import { useSchemaVersions } from '../hooks/useSchemas';
 import ConcentricLoader from '../../../shared/components/feedback/ConcentricLoader';
+import { UploadModal } from '../../uploads/components/UploadModal';
+import { useState } from 'react';
 
 export default function SchemaVersionsListPage() {
   const { id: sourceId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: versions, isLoading } = useSchemaVersions(sourceId ?? '');
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   if (isLoading) return <ConcentricLoader />;
 
@@ -25,15 +28,20 @@ export default function SchemaVersionsListPage() {
           </h1>
         </div>
         <div className="flex items-center gap-2">
-          {versions && versions.length > 0 && (
-            <button
-              onClick={() => navigate(`/sources/${sourceId}/upload`)}
-              className="flex items-center gap-2 rounded-lg bg-[var(--color-brand)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--color-brand-dark)]"
-            >
-              <Upload className="h-4 w-4" />
-              Upload
-            </button>
-          )}
+          <button
+            onClick={() => setIsUploadModalOpen(true)}
+            className="flex items-center gap-2 rounded-lg bg-[var(--color-brand)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--color-brand-dark)]"
+          >
+            <Upload className="h-4 w-4" />
+            Upload
+          </button>
+          <button
+            onClick={() => navigate(`/sources/${sourceId}/schemas/import`)}
+            className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] hover:bg-gray-50"
+          >
+            <FileJson className="h-4 w-4" />
+            Importer JSON
+          </button>
           <button
             onClick={() => navigate(`/sources/${sourceId}/schemas/new`)}
             className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] hover:bg-gray-50"
@@ -99,6 +107,12 @@ export default function SchemaVersionsListPage() {
           </tbody>
         </table>
       </div>
+
+      <UploadModal
+        sourceId={sourceId ?? ''}
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+      />
     </div>
   );
 }

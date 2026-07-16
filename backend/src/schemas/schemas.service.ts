@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSchemaVersionDto } from './dto/create-schema-version.dto';
+import { ImportSchemaDto } from './dto/import-schema.dto';
 import { Prisma } from '../../generated/prisma/client';
 
 // Service métier : gère les SchemaVersion (versions de schéma de validation d'une Source).
@@ -117,6 +118,64 @@ export class SchemasService {
 
     await this.prisma.schemaVersion.delete({
       where: { sourceId_version: { sourceId, version } },
+    });
+  }
+
+  // Convertit un ImportSchemaDto (format JSON fichier) en CreateSchemaVersionDto
+  // et crée la nouvelle version de schéma
+  async importFromJson(
+    sourceId: string,
+    dto: ImportSchemaDto,
+    userId: string,
+    isAdmin: boolean,
+  ) {
+    await this.assertSourceOwnership(sourceId, userId, isAdmin);
+
+    // Conversion des colonnes du format JSON vers le format interne
+    const fields = dto.schema.columns.map((col) => {
+      const field: any = {
+        name: col.name,
+        type: col.type,
+        required: col.required ?? false,
+      };
+
+      // Mapping des contraintes optionnelles
+      if (col.pattern) field.pattern = col.pattern;
+      if (col.format) field.pattern = col.format; // format de date -> pattern
+      if (col.allowed_values && col.allowed_values.length > 0)
+        field.enum = col.allowed_values;
+      if (col.min !== undefined) field.min = col.min;
+      if (col.max !== undefined) field.max = col.max;
+      if (col.min_length !== undefined) field.min = col.min_length;
+      if (col.max_length !== undefined) field.max = col.max_length;
+      if (col.description) field.description = col.description;
+
+      // Contraintes au niveau ligne (si présentes dans le JSON)
+      if (dto.schema.row_constraints && dto.schema.row_constraints.length > 0) {
+        field.row_constraints = dto.schema.row_constraints;
+      }
+
+      return field;
+    });
+
+    // Détermination de la version
+    const latest = await this.prisma.schemaVersion.findFirst({
+      where: { sourceId },
+      orderBy: { version: 'desc' },
+    });
+
+    const nextVersion = dto.version
+      ? dto.version
+      : latest
+        ? latest.version + 1
+        : 1;
+
+    return this.prisma.schemaVersion.create({
+      data: {
+        sourceId,
+        version: nextVersion,
+        fields: fields as unknown as Prisma.InputJsonValue,
+      },
     });
   }
 }

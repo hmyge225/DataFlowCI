@@ -2,6 +2,7 @@ import { api } from '../../../shared/lib/api';
 import type {
   SchemaVersion,
   CreateSchemaVersionInput,
+  ImportSchemaInput,
 } from '../types';
 
 export async function getSchemaVersionsRequest(sourceId: string) {
@@ -27,6 +28,17 @@ export async function createSchemaVersionRequest(
 ) {
   const { data } = await api.post<SchemaVersion>(
     `/sources/${sourceId}/schemas`,
+    input,
+  );
+  return data;
+}
+
+export async function importSchemaRequest(
+  sourceId: string,
+  input: ImportSchemaInput,
+) {
+  const { data } = await api.post<SchemaVersion>(
+    `/sources/${sourceId}/schemas/import`,
     input,
   );
   return data;
