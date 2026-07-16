@@ -9,10 +9,12 @@ export const useUpload = () => {
     mutationFn: ({
       sourceId,
       file,
+      schemaVersion,
     }: {
       sourceId: string;
       file: File;
-    }) => uploadFile(sourceId, file),
+      schemaVersion?: number;
+    }) => uploadFile(sourceId, file, schemaVersion),
     onSuccess: () => {
       toast.success('Fichier uploadé avec succès');
       queryClient.invalidateQueries({ queryKey: ['import-jobs'] });

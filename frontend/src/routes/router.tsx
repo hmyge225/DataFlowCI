@@ -10,6 +10,7 @@ import SourceNewPage from '../pages/Sources/SourceNewPage';
 import SourceEditPage from '../pages/Sources/SourceEditPage';
 import SchemaVersionsPage from '../pages/Schemas/SchemaVersionsPage';
 import SchemaNewPage from '../pages/Schemas/SchemaNewPage';
+import SchemaImportPage from '../pages/Schemas/SchemaImportPage';
 import SchemaVersionDetailPage from '../pages/Schemas/SchemaVersionDetailPage';
 import { UploadPage } from '../pages/Uploads/UploadPage';
 import { ImportJobsPage } from '../pages/ImportJobs/ImportJobsPage';
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
           {
             path: '/sources/:id/schemas/new',
             element: <SchemaNewPage />,
+          },
+          {
+            path: '/sources/:id/schemas/import',
+            element: <SchemaImportPage />,
           },
           {
             path: '/sources/:id/schemas/:version',
@@ -117,6 +122,10 @@ export const router = createBrowserRouter([
           {
             path: '/sources/:id/schemas/new',
             element: <SchemaNewPage />,
+          },
+          {
+            path: '/sources/:id/schemas/import',
+            element: <SchemaImportPage />,
           },
           {
             path: '/sources/:id/schemas/:version',

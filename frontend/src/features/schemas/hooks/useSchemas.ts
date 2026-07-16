@@ -8,9 +8,10 @@ import {
   getSchemaVersionsRequest,
   getSchemaVersionRequest,
   createSchemaVersionRequest,
+  importSchemaRequest,
   deleteSchemaVersionRequest,
 } from '../services/schemas.service';
-import type { CreateSchemaVersionInput } from '../types';
+import type { CreateSchemaVersionInput, ImportSchemaInput } from '../types';
 
 const schemasKeys = {
   all: ['schemas'] as const,
@@ -49,6 +50,21 @@ export function useCreateSchemaVersion(sourceId: string) {
     },
     onError: (err: Error) => {
       toast.error(err.message || 'Erreur lors de la création');
+    },
+  });
+}
+
+export function useImportSchema(sourceId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: ImportSchemaInput) =>
+      importSchemaRequest(sourceId, input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: schemasKeys.lists() });
+      toast.success('Schéma importé avec succès');
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Erreur lors de l\'import');
     },
   });
 }

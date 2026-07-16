@@ -3,7 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../src/prisma/prisma.service';
 
 describe('Schema Versions (e2e)', () => {
   let app: INestApplication<App>;
@@ -170,6 +170,89 @@ describe('Schema Versions (e2e)', () => {
       .patch(`/sources/${sourceId}/schemas/1`)
       .set('Authorization', `Bearer ${user1Token}`)
       .send({ fields: validFields })
+      .expect(404);
+  });
+
+  it('POST /import creates schema from JSON format', async () => {
+    const jsonSchema = {
+      source_name: 'Test Import Schema',
+      description: 'Schema imported from JSON',
+      version: 3,
+      file_format: 'csv',
+      delimiter: ',',
+      encoding: 'utf-8',
+      has_header: true,
+      schema: {
+        columns: [
+          {
+            name: 'email',
+            type: 'string',
+            required: true,
+            pattern: '^\\S+@\\S+\\.\\S+$',
+            description: 'Email address',
+          },
+          {
+            name: 'age',
+            type: 'integer',
+            required: true,
+            min: 0,
+            max: 120,
+            description: 'Age in years',
+          },
+        ],
+        row_constraints: [
+          {
+            name: 'unique_email',
+            description: 'Email must be unique',
+          },
+        ],
+      },
+    };
+
+    const res = await request(app.getHttpServer())
+      .post(`/sources/${sourceId}/schemas/import`)
+      .set('Authorization', `Bearer ${user1Token}`)
+      .send(jsonSchema)
+      .expect(201);
+
+    const body = res.body as { version: number; sourceId: string };
+    expect(body.version).toBe(3);
+    expect(body.sourceId).toBe(sourceId);
+  });
+
+  it('POST /import rejects invalid JSON format', async () => {
+    const invalidJson = {
+      source_name: 'Invalid Schema',
+      schema: {
+        columns: [
+          {
+            name: 'email',
+            type: 'invalid_type',
+            required: true,
+          },
+        ],
+      },
+    };
+
+    await request(app.getHttpServer())
+      .post(`/sources/${sourceId}/schemas/import`)
+      .set('Authorization', `Bearer ${user1Token}`)
+      .send(invalidJson)
+      .expect(400);
+  });
+
+  it('POST /import returns 404 for non-existent source', async () => {
+    const jsonSchema = {
+      source_name: 'Test Schema',
+      schema: {
+        columns: [{ name: 'email', type: 'string', required: true }],
+      },
+    };
+
+    await request(app.getHttpServer())
+      .post('/sources/non-existent/schemas/import')
+      .set('Authorization', `Bearer ${user1Token}`)
+      .send(jsonSchema)
       .expect(404);
   });
 });

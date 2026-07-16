@@ -24,6 +24,7 @@ import {
 } from '@nestjs/swagger';
 import { SchemasService } from './schemas.service';
 import { CreateSchemaVersionDto } from './dto/create-schema-version.dto';
+import { ImportSchemaDto } from './dto/import-schema.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
   CurrentUser,
@@ -58,6 +59,26 @@ export class SchemasController {
   ) {
     const isAdmin = user.role === 'ADMIN';
     return this.schemasService.create(sourceId, dto, user.userId, isAdmin);
+  }
+
+  // POST /sources/:sourceId/schemas/import
+  // Importe un schéma depuis un fichier JSON formaté.
+  @Post('import')
+  @ApiOperation({
+    summary: 'Importer un schéma depuis un fichier JSON',
+    description:
+      'Importe une définition de schéma depuis un fichier JSON respectant le format spécifié. Crée automatiquement la version suivante ou utilise la version spécifiée.',
+  })
+  @ApiCreatedResponse({ description: 'Version de schéma importée avec succès.' })
+  @ApiBadRequestResponse({ description: 'Format JSON invalide.' })
+  @ApiNotFoundResponse({ description: 'Source introuvable.' })
+  async importFromJson(
+    @Param('sourceId') sourceId: string,
+    @Body() dto: ImportSchemaDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    const isAdmin = user.role === 'ADMIN';
+    return this.schemasService.importFromJson(sourceId, dto, user.userId, isAdmin);
   }
 
   // GET /sources/:sourceId/schemas

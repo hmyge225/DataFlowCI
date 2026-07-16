@@ -6,7 +6,9 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import {
   ApiTags,
   ApiOperation,
@@ -37,9 +39,9 @@ export class UploadsController {
 
   @Post()
   @ApiOperation({
-    summary: 'Uploader un fichier CSV pour une source',
+    summary: 'Uploader un fichier CSV ou Excel pour une source',
     description:
-      'Upload un fichier CSV, le stocke localement et crée un ImportJob en PENDING. Le traitement sera effectué par le worker.',
+      'Upload un fichier CSV/Excel, le stocke localement et crée un ImportJob en PENDING. Le traitement sera effectué par le worker. Optionnellement, spécifiez une version de schéma.',
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -49,6 +51,10 @@ export class UploadsController {
         file: {
           type: 'string',
           format: 'binary',
+        },
+        schemaVersion: {
+          type: 'number',
+          description: 'Version de schéma optionnelle. Si non fournie, utilise la dernière version.',
         },
       },
     },
@@ -67,9 +73,9 @@ export class UploadsController {
         fileSize: 20 * 1024 * 1024, // 20 Mo
       },
       fileFilter: (req, file, callback) => {
-        if (!file.originalname.match(/\.csv$/i)) {
+        if (!file.originalname.match(/\.(csv|xlsx|xls)$/i)) {
           return callback(
-            new BadRequestException('Seuls les fichiers CSV sont autorisés'),
+            new BadRequestException('Seuls les fichiers CSV, XLSX et XLS sont autorisés'),
             false,
           );
         }
@@ -81,12 +87,14 @@ export class UploadsController {
     @Param('sourceId') sourceId: string,
     @UploadedFile() file: { originalname: string; buffer: Buffer },
     @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
   ): Promise<UploadResponseDto> {
     if (!file) {
       throw new BadRequestException('Aucun fichier fourni');
     }
 
     const isAdmin = user.role === 'ADMIN';
-    return this.uploadsService.uploadFile(sourceId, file, user.userId, isAdmin);
+    const schemaVersion = req.body?.schemaVersion ? parseInt(req.body.schemaVersion as string) : undefined;
+    return this.uploadsService.uploadFile(sourceId, file, user.userId, isAdmin, schemaVersion);
   }
 }

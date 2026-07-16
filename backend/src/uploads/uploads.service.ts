@@ -72,12 +72,27 @@ export class UploadsService {
     file: { originalname: string; buffer: Buffer },
     userId: string,
     isAdmin: boolean,
+    schemaVersion?: number,
   ): Promise<UploadResponseDto> {
-    const { activeSchemaVersion } = await this.assertSourceWithActiveSchema(
+    const { source: sourceData, activeSchemaVersion } = await this.assertSourceWithActiveSchema(
       sourceId,
       userId,
       isAdmin,
     );
+
+    // Si une version de schéma est spécifiée, l'utiliser, sinon utiliser la dernière version
+    let targetSchemaVersion = activeSchemaVersion;
+    if (schemaVersion) {
+      const specifiedVersion = sourceData.schemaVersions?.find(
+        (sv) => sv.version === schemaVersion,
+      );
+      if (!specifiedVersion) {
+        throw new BadRequestException(
+          `Version de schéma ${schemaVersion} introuvable pour cette source`,
+        );
+      }
+      targetSchemaVersion = specifiedVersion;
+    }
 
     // Générer un nom de fichier unique
     const uniqueFilename = `${Date.now()}-${file.originalname}`;
@@ -90,7 +105,7 @@ export class UploadsService {
     const importJob = await this.prisma.importJob.create({
       data: {
         sourceId,
-        schemaVersionId: activeSchemaVersion.id,
+        schemaVersionId: targetSchemaVersion.id,
         userId,
         filepath,
         originalFilename: file.originalname,
