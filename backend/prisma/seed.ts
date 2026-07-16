@@ -20,13 +20,13 @@ async function main() {
       email: adminEmail,
       password: adminPassword,
       firstName: 'Admin',
-      lastName: 'DataFlowCI',
+      lastName: 'Guillaume',
       nameCorporate: 'DataFlowCI',
       role: 'ADMIN',
     },
   });
 
-  const userEmail = 'user@dataflowci.com';
+  const userEmail = 'pullo@dataflowci.com';
   const userPassword = await bcrypt.hash('User123!', saltRounds);
 
   const user = await prisma.user.upsert({
@@ -35,8 +35,8 @@ async function main() {
     create: {
       email: userEmail,
       password: userPassword,
-      firstName: 'John',
-      lastName: 'Doe',
+      firstName: 'Pullo',
+      lastName: 'Fahé',
       nameCorporate: 'BSTEC',
       role: 'USER',
     },
