@@ -3,7 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
-import { PrismaService } from '../src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 describe('Uploads (e2e)', () => {
   let app: INestApplication<App>;
