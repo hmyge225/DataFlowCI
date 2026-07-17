@@ -55,7 +55,9 @@ npm install
 # Configurer les variables d'environnement
 cp .env.example .env
 # Éditer .env avec vos informations de connexion
-# Créer un fichier .env avec : 
+#
+# Créer un fichier .env avec :
+#
 # DATABASE_URL="mysql://user:password@localhost:3306/dataflow_ci?allowPublicKeyRetrieval=true&useSSL=false"
 #
 # Pour ces deux variables il faut générer un JWT (https://jwtsecretkeygenerator.com/fr/)
