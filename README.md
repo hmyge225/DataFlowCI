@@ -22,10 +22,9 @@ DataFlowCI permet aux entreprises de :
 - **Backend** : NestJS + Prisma + MariaDB (déployé sur Render)
 - **Queue** : BullMQ + Redis pour le traitement asynchrone
 - **Storage** : Fichiers uploadés (local en dev, S3 en prod)
-
 ---
 
-## 🚀 Lancer le projet en local
+## Lancer le projet en local
 
 ### Prérequis
 
@@ -56,7 +55,15 @@ npm install
 # Configurer les variables d'environnement
 cp .env.example .env
 # Éditer .env avec vos informations de connexion
-# DATABASE_URL, JWT_SECRET, JWT_REFRESH_SECRET, REDIS_HOST, REDIS_PORT
+# Créer un fichier .env avec : 
+# DATABASE_URL="mysql://user:password@localhost:3306/dataflow_ci?allowPublicKeyRetrieval=true&useSSL=false"
+#
+# Pour ces deux variables il faut générer un JWT (https://jwtsecretkeygenerator.com/fr/)
+# JWT_SECRET=""
+# JWT_REFRESH_SECRET=""
+#
+# REDIS_HOST=
+# REDIS_PORT=
 
 # Générer le client Prisma
 npx prisma generate
@@ -83,7 +90,9 @@ npm install
 
 # Configurer l'URL de l'API
 # Créer un fichier .env avec :
-# VITE_API_URL=http://localhost:3000/api
+# VITE_API_URL=https://dataflowci.onrender.com/api
+# VITE_BASE_URL=https://dataflowci.onrender.com
+# VITE_APP_NAME=DataFlowCI
 
 # Lancer le serveur de développement
 npm run dev
@@ -101,19 +110,18 @@ docker run -d -p 6379:6379 redis:alpine
 
 ### 6. Tester l'application
 
-1. Ouvrir `http://localhost:5173` dans le navigateur
+1. Ouvrir `https://data-flow-ci.vercel.app` dans le navigateur
 2. S'inscrire ou se connecter avec les comptes de test (si seeding activé) :
    - **Admin** : `admin@dataflowci.com` / `Admin123!`
    - **User** : `pullo@dataflowci.com` / `User123!`
 3. Créer une source, définir un schéma, uploader un fichier CSV
-
 ---
 
-## 🌐 Version déployée
+## Version déployée
 
-- **Frontend** : [DataFlowCI Frontend](https://dataflowci.vercel.app)
-- **Backend** : [DataFlowCI Backend](https://dataflowci-backend.onrender.com/api)
-- **API Documentation** : [Swagger UI](https://dataflowci-backend.onrender.com/docs)
+- **Frontend** : [DataFlowCI Frontend](https://data-flow-ci.vercel.app)
+- **Backend** : [DataFlowCI Backend](https://dataflowci.onrender.com/api)
+- **API Documentation** : [Swagger UI](https://dataflowci.onrender.com/docs)
 
 ---
 
