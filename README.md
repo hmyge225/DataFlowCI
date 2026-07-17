@@ -80,7 +80,7 @@ npx prisma db seed
 npm run start:dev
 ```
 
-Le backend sera accessible sur `http://localhost:3000/api`
+Le backend sera accessible sur `https://dataflowci.onrender.com/api`
 
 ### 4. Frontend
 
@@ -100,7 +100,7 @@ npm install
 npm run dev
 ```
 
-Le frontend sera accessible sur `http://localhost:5173`
+Le frontend sera accessible sur `https://data-flow-ci.vercel.app`
 
 ### 5. Redis (optionnel si déjà installé)
 
@@ -167,5 +167,4 @@ DataFlowCI/
 - **Redis requis** : La queue BullMQ nécessite Redis pour fonctionner
 - **Tokens JWT** : Access token (15 min) + Refresh token (7 jours) stocké en cookie HttpOnly
 - **Rôles** : Les routes admin sont protégées par le rôle `ADMIN`
-
 ---
