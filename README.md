@@ -90,11 +90,8 @@ cd frontend
 # Installer les dépendances
 npm install
 
-# Configurer l'URL de l'API
 # Créer un fichier .env avec :
-# VITE_API_URL=https://dataflowci.onrender.com/api
-# VITE_BASE_URL=https://dataflowci.onrender.com
-# VITE_APP_NAME=DataFlowCI
+cp .env.example .env
 
 # Lancer le serveur de développement
 npm run dev

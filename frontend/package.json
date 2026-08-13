@@ -16,7 +16,7 @@
     "install": "^0.13.0",
     "lucide-react": "^1.24.0",
     "motion": "^12.42.2",
-    "npm": "^11.18.0",
+    "npm": "^10.9.9",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hot-toast": "^2.6.0",
